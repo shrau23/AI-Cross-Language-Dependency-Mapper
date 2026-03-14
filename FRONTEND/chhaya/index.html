@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyglot 3D Dependency Graph</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="info">
+        <h1>Polyglot Architecture Graph</h1>
+        <p><strong>Left Click + Drag:</strong> Rotate | <strong>Scroll:</strong> Zoom | <strong>Hover:</strong> Node Info</p>
+    </div>
+    
+    <!-- Container for the 3D Graph -->
+    <div id="graph-container"></div>
+
+    <!-- Load Three.js -->
+    <script src="https://unpkg.com/three"></script>
+    
+    <!-- Load 3D Force Graph -->
+    <script src="https://unpkg.com/3d-force-graph"></script>
+
+    <!-- Load Custom Graph Logic -->
+    <script src="graph.js"></script>
+</body>
+</html>

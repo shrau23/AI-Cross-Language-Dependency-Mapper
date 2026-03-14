@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "name": "UserDashboard",
+      "type": "component",
+      "language": "react",
+      "id": "UserDashboard"
+    },
+    {
+      "name": "ProfilePage",
+      "type": "component",
+      "language": "react",
+      "id": "ProfilePage"
+    },
+    {
+      "name": "OrdersPage",
+      "type": "component",
+      "language": "react",
+      "id": "OrdersPage"
+    },
+    {
+      "name": "AdminPanel",
+      "type": "component",
+      "language": "react",
+      "id": "AdminPanel"
+    },
+    {
+      "name": "get_users",
+      "type": "endpoint",
+      "language": "fastapi",
+      "id": "get_users"
+    },
+    {
+      "name": "get_profile",
+      "type": "endpoint",
+      "language": "fastapi",
+      "id": "get_profile"
+    },
+    {
+      "name": "get_orders",
+      "type": "endpoint",
+      "language": "fastapi",
+      "id": "get_orders"
+    },
+    {
+      "name": "create_order",
+      "type": "endpoint",
+      "language": "fastapi",
+      "id": "create_order"
+    },
+    {
+      "name": "UserService",
+      "type": "service",
+      "language": "python",
+      "id": "UserService"
+    },
+    {
+      "name": "OrderService",
+      "type": "service",
+      "language": "python",
+      "id": "OrderService"
+    },
+    {
+      "name": "AuthService",
+      "type": "service",
+      "language": "python",
+      "id": "AuthService"
+    },
+    {
+      "name": "NotificationService",
+      "type": "service",
+      "language": "python",
+      "id": "NotificationService"
+    },
+    {
+      "name": "AnalyticsService",
+      "type": "service",
+      "language": "python",
+      "id": "AnalyticsService"
+    },
+    {
+      "name": "users_table",
+      "type": "table",
+      "language": "postgres",
+      "id": "users_table"
+    },
+    {
+      "name": "orders_table",
+      "type": "table",
+      "language": "postgres",
+      "id": "orders_table"
+    },
+    {
+      "name": "RedisCache",
+      "type": "cache",
+      "language": "redis",
+      "id": "RedisCache"
+    },
+    {
+      "name": "OrderQueue",
+      "type": "queue",
+      "language": "rabbitmq",
+      "id": "OrderQueue"
+    }
+  ],
+  "links": []
+}
