@@ -65,6 +65,23 @@ const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
             </div>
           ))}
         </div>
+        
+        {/* EXPORT BUTTON - Person D Final Touch */}
+        <button 
+          onClick={() => {
+            const report = {
+              change: 'detected_function',
+              impacted_modules: result.affectedFiles,
+              riskLevel: result.riskLevel,
+              timestamp: new Date().toISOString()
+            };
+            navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+            alert('✅ Breakage Report Copied! Paste to clipboard.');
+          }}
+          className="mt-6 w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+        >
+          💾 Copy Breakage Report JSON
+        </button>
       </div>
     </div>
   );
