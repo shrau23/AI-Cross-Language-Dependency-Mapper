@@ -11,26 +11,26 @@ const GraphMetrics = ({ metrics }: GraphMetricsProps) => {
       title: 'Total Nodes',
       value: metrics.totalNodes,
       icon: Network,
-      color: 'text-blue-500 bg-blue-500/10'
+      color: 'text-blue-400 bg-blue-500/10'
     },
     {
       title: 'Total Edges',
       value: metrics.totalEdges,
       icon: GitBranch,
-      color: 'text-green-500 bg-green-500/10'
+      color: 'text-green-400 bg-green-500/10'
     },
     {
-      title: 'Most Dependent',
+      title: 'Most Connected',
       value: metrics.mostDependentFile,
       icon: FileCode,
-      color: 'text-orange-500 bg-orange-500/10',
+      color: 'text-orange-400 bg-orange-500/10',
       isText: true
     },
     {
-      title: 'Most Used API',
+      title: 'Primary Contract',
       value: metrics.mostUsedAPI,
       icon: Zap,
-      color: 'text-purple-500 bg-purple-500/10',
+      color: 'text-cyan-400 bg-cyan-500/10',
       isText: true
     }
   ];
@@ -40,10 +40,7 @@ const GraphMetrics = ({ metrics }: GraphMetricsProps) => {
       {cards.map((card, index) => {
         const Icon = card.icon;
         return (
-          <div
-            key={index}
-            className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-all"
-          >
+          <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-all">
             <div className="flex items-center justify-between mb-3">
               <span className="text-gray-400 text-xs font-medium">{card.title}</span>
               <div className={`p-2 rounded-lg ${card.color}`}>

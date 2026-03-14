@@ -1,8 +1,8 @@
-import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
-import { SimulationResult } from '../types';
+import { AlertCircle, CheckCircle, AlertTriangle, Route } from 'lucide-react';
+import { ImpactResponse } from '../types';
 
 interface ImpactAnalysisPanelProps {
-  result: SimulationResult | null;
+  result: ImpactResponse | null;
 }
 
 const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
@@ -15,8 +15,14 @@ const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
     );
   }
 
+  const riskLevel = result.summary.blast_radius_score >= 70
+    ? 'High'
+    : result.summary.blast_radius_score >= 35
+      ? 'Medium'
+      : 'Low';
+
   const getRiskIcon = () => {
-    switch (result.riskLevel) {
+    switch (riskLevel) {
       case 'Low':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'Medium':
@@ -27,13 +33,13 @@ const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
   };
 
   const getRiskColor = () => {
-    switch (result.riskLevel) {
+    switch (riskLevel) {
       case 'Low':
-        return 'bg-green-500/10 border-green-500/20 text-green-500';
+        return 'bg-green-500/10 border-green-500/20 text-green-400';
       case 'Medium':
-        return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500';
+        return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400';
       case 'High':
-        return 'bg-red-500/10 border-red-500/20 text-red-500';
+        return 'bg-red-500/10 border-red-500/20 text-red-400';
     }
   };
 
@@ -44,24 +50,41 @@ const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
         <span>Impact Analysis</span>
       </h3>
 
-      <div className={`${getRiskColor()} border rounded-lg p-4 mb-6 flex items-center space-x-3`}>
-        {getRiskIcon()}
-        <div>
-          <p className="font-semibold">Risk Level: {result.riskLevel}</p>
-          <p className="text-sm opacity-80">{result.affectedFiles.length} files will be affected</p>
+      <div className={`${getRiskColor()} border rounded-lg p-4 mb-6 flex items-center justify-between`}>
+        <div className="flex items-center space-x-3">
+          {getRiskIcon()}
+          <div>
+            <p className="font-semibold">Risk Level: {riskLevel}</p>
+            <p className="text-sm opacity-80">{result.summary.affected_count} nodes affected</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-xs uppercase tracking-wide opacity-70">Blast Radius</p>
+          <p className="text-2xl font-bold">{result.summary.blast_radius_score}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+          <p className="text-xs text-gray-500 mb-1">High-Risk Nodes</p>
+          <p className="text-2xl font-bold text-white">{result.summary.high_risk_count}</p>
+        </div>
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+          <p className="text-xs text-gray-500 mb-1">Traversal</p>
+          <p className="text-2xl font-bold text-white uppercase">{result.algorithm}</p>
         </div>
       </div>
 
       <div>
-        <h4 className="text-gray-400 text-sm mb-3">Affected Files</h4>
+        <h4 className="text-gray-400 text-sm mb-3">Affected Nodes</h4>
         <div className="space-y-2 max-h-64 overflow-y-auto">
-          {result.affectedFiles.map((file, index) => (
-            <div
-              key={index}
-              className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between hover:border-gray-600 transition-colors"
-            >
-              <span className="text-gray-300 text-sm font-mono">{file}</span>
-              <AlertTriangle className="w-4 h-4 text-yellow-500" />
+          {result.affected_nodes.map((node) => (
+            <div key={node.id} className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 flex items-center justify-between">
+              <div>
+                <span className="text-gray-300 text-sm font-mono">{node.id}</span>
+                <p className="text-xs text-gray-500 mt-1">Depth {node.depth} • Paths {node.path_count}</p>
+              </div>
+              <span className="text-sm text-cyan-300">{Math.round(node.risk_score * 100)}</span>
             </div>
           ))}
         </div>
@@ -83,6 +106,18 @@ const ImpactAnalysisPanel = ({ result }: ImpactAnalysisPanelProps) => {
           💾 Copy Breakage Report JSON
         </button>
       </div>
+
+      {result.paths.length > 0 && (
+        <div className="mt-6">
+          <h4 className="text-gray-400 text-sm mb-3 flex items-center space-x-2">
+            <Route className="w-4 h-4" />
+            <span>Key Propagation Path</span>
+          </h4>
+          <div className="bg-gray-950 border border-gray-700 rounded-lg p-4 text-sm text-gray-300">
+            {result.paths[0].join(' -> ')}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

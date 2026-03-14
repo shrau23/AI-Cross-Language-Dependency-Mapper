@@ -1,1 +1,8 @@
+.venv/
+venv/
 .env
+node_modules/
+dist/
+build/
+.next/
+.cache/

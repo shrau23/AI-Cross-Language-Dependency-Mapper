@@ -23,11 +23,17 @@ const TreeNode = ({ node, level, selectedFile, onFileSelect }: TreeNodeProps) =>
   const getLanguageColor = (language?: string) => {
     switch (language) {
       case 'Python':
+      case 'python':
         return 'text-blue-400';
       case 'JavaScript':
+      case 'javascript':
+      case 'typescript':
         return 'text-yellow-400';
       case 'SQL':
+      case 'sql':
         return 'text-orange-400';
+      case 'env':
+        return 'text-emerald-400';
       default:
         return 'text-gray-400';
     }

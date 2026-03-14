@@ -1,20 +1,20 @@
 import { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
-import { FileNode, Dependency } from '../types';
+import { GraphEdge, GraphNode } from '../types';
 
 interface DependencyGraphProps {
-  nodes: FileNode[];
-  edges: Dependency[];
-  selectedFile: string | null;
-  highlightedNodes: string[];
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  selectedNodeId: string | null;
+  highlightedNodeIds: string[];
   onNodeClick: (nodeId: string) => void;
 }
 
 const DependencyGraph = ({
   nodes,
   edges,
-  selectedFile,
-  highlightedNodes,
+  selectedNodeId,
+  highlightedNodeIds,
   onNodeClick
 }: DependencyGraphProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,14 +25,17 @@ const DependencyGraph = ({
 
     const getLanguageColor = (language: string) => {
       switch (language) {
-        case 'Python':
-          return '#3b82f6';
-        case 'JavaScript':
+        case 'python':
+          return '#60a5fa';
+        case 'javascript':
+        case 'typescript':
           return '#fbbf24';
-        case 'SQL':
-          return '#f97316';
+        case 'sql':
+          return '#fb923c';
+        case 'env':
+          return '#34d399';
         default:
-          return '#6b7280';
+          return '#9ca3af';
       }
     };
 
@@ -40,10 +43,18 @@ const DependencyGraph = ({
       container: containerRef.current,
       elements: [
         ...nodes.map((node) => ({
-          data: { id: node.id, label: node.name, language: node.language }
+          data: {
+            id: node.id,
+            label: node.label,
+            language: node.language
+          }
         })),
         ...edges.map((edge) => ({
-          data: { source: edge.source, target: edge.target }
+          data: {
+            id: edge.id,
+            source: edge.source,
+            target: edge.target
+          }
         }))
       ],
       style: [
@@ -56,27 +67,29 @@ const DependencyGraph = ({
             'text-valign': 'center',
             'text-halign': 'center',
             'font-size': '10px',
-            width: 60,
-            height: 60,
+            width: 56,
+            height: 56,
             'border-width': 2,
             'border-color': '#1f2937',
             'text-wrap': 'wrap',
-            'text-max-width': '80px'
+            'text-max-width': '90px'
           }
         },
         {
           selector: 'node:selected',
           style: {
-            'border-color': '#06b6d4',
-            'border-width': 3
+            'border-color': '#22d3ee',
+            'border-width': 4
           }
         },
         {
           selector: 'node.highlighted',
           style: {
             'border-color': '#10b981',
-            'border-width': 3,
-            'background-color': '#10b981'
+            'border-width': 4,
+            'overlay-color': '#38bdf8',
+            'overlay-opacity': 0.18,
+            'overlay-padding': 8
           }
         },
         {
@@ -94,19 +107,20 @@ const DependencyGraph = ({
           style: {
             'line-color': '#10b981',
             'target-arrow-color': '#10b981',
-            width: 3
+            width: 4
           }
         }
       ],
       layout: {
-        name: 'circle',
+        name: 'cose',
+        animate: true,
+        animationDuration: 600,
         padding: 50
       }
     });
 
     cy.on('tap', 'node', (event) => {
-      const nodeId = event.target.id();
-      onNodeClick(nodeId);
+      onNodeClick(event.target.id());
     });
 
     cyRef.current = cy;
@@ -122,42 +136,57 @@ const DependencyGraph = ({
     cyRef.current.nodes().removeClass('highlighted');
     cyRef.current.edges().removeClass('highlighted');
 
-    if (selectedFile) {
-      cyRef.current.$(`#${selectedFile}`).select();
+    if (selectedNodeId) {
+      const node = cyRef.current.$(`#${CSS.escape(selectedNodeId)}`);
+      node.select();
     }
 
-    if (highlightedNodes.length > 0) {
-      highlightedNodes.forEach((nodeId) => {
-        cyRef.current!.$(`#${nodeId}`).addClass('highlighted');
-        cyRef.current!.edges().forEach((edge) => {
-          if (
-            highlightedNodes.includes(edge.source().id()) &&
-            highlightedNodes.includes(edge.target().id())
-          ) {
-            edge.addClass('highlighted');
+    if (highlightedNodeIds.length > 0) {
+      const highlightedSet = new Set(highlightedNodeIds);
+      highlightedNodeIds.forEach((nodeId, index) => {
+        const node = cyRef.current!.$(`#${CSS.escape(nodeId)}`);
+        node.addClass('highlighted');
+        node.animate(
+          {
+            style: {
+              width: 70,
+              height: 70
+            }
+          },
+          {
+            duration: 180 + index * 60
           }
-        });
+        );
+        node.animate(
+          {
+            style: {
+              width: 56,
+              height: 56
+            }
+          },
+          {
+            duration: 200
+          }
+        );
+      });
+
+      cyRef.current.edges().forEach((edge) => {
+        if (highlightedSet.has(edge.source().id()) && highlightedSet.has(edge.target().id())) {
+          edge.addClass('highlighted');
+        }
       });
     }
-  }, [selectedFile, highlightedNodes]);
+  }, [selectedNodeId, highlightedNodeIds]);
 
   return (
     <div className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden h-full">
       <div className="bg-gray-900/50 px-4 py-3 border-b border-gray-700 flex items-center justify-between">
         <h3 className="text-white font-semibold">Dependency Graph</h3>
-        <div className="flex items-center space-x-4 text-xs">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-            <span className="text-gray-400">Python</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span className="text-gray-400">JavaScript</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-            <span className="text-gray-400">SQL</span>
-          </div>
+        <div className="flex items-center space-x-4 text-xs text-gray-400">
+          <span>Python</span>
+          <span>TS/JS</span>
+          <span>SQL</span>
+          <span>ENV</span>
         </div>
       </div>
       <div ref={containerRef} className="w-full h-[calc(100%-50px)]" />
