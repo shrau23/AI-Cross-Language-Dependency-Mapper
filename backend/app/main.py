@@ -14,6 +14,7 @@ from app.routers.ai import router as ai_router
 from app.routers.graph import router as graph_router
 from app.routers.health import router as health_router
 from app.routers.impact import router as impact_router
+from app.routers.scan import router as scan_router
 from app.services.graph_service import graph_service
 from app.services.websocket_service import ws_manager
 
@@ -31,6 +32,7 @@ app.include_router(health_router)
 app.include_router(graph_router)
 app.include_router(impact_router)
 app.include_router(ai_router)
+app.include_router(scan_router)
 
 # Model for repository input
 class RepoInput(BaseModel):

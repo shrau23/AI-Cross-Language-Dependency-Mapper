@@ -88,3 +88,10 @@ export interface AIExplainResponse {
   code_snippet: string;
   cached: boolean;
 }
+
+export interface ScanResponse {
+  repo_url: string;
+  repo_name: string;
+  file_count: number;
+  graph: GraphResponse;
+}

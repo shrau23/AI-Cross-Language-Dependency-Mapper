@@ -2,11 +2,17 @@ import { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
 import { GraphEdge, GraphNode } from '../types';
 
+type LegacyGraphNode = GraphNode & {
+  name?: string;
+};
+
 interface DependencyGraphProps {
-  nodes: GraphNode[];
+  nodes: LegacyGraphNode[];
   edges: GraphEdge[];
-  selectedNodeId: string | null;
-  highlightedNodeIds: string[];
+  selectedNodeId?: string | null;
+  highlightedNodeIds?: string[];
+  selectedFile?: string | null;
+  highlightedNodes?: string[];
   onNodeClick: (nodeId: string) => void;
 }
 
@@ -15,13 +21,22 @@ const DependencyGraph = ({
   edges,
   selectedNodeId,
   highlightedNodeIds,
+  selectedFile,
+  highlightedNodes,
   onNodeClick
 }: DependencyGraphProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
+  const layoutRef = useRef<cytoscape.Layout | null>(null);
+  const activeSelectedNodeId = selectedNodeId ?? selectedFile ?? null;
+  const activeHighlightedNodeIds = highlightedNodeIds ?? highlightedNodes ?? [];
 
   useEffect(() => {
     if (!containerRef.current) return;
+    if (cyRef.current && !cyRef.current.destroyed()) {
+      cyRef.current.destroy();
+      cyRef.current = null;
+    }
 
     const getLanguageColor = (language: string) => {
       switch (language) {
@@ -45,8 +60,8 @@ const DependencyGraph = ({
         ...nodes.map((node) => ({
           data: {
             id: node.id,
-            label: node.label,
-            language: node.language
+            label: node.label || node.name || node.id,
+            language: node.language || 'unknown'
           }
         })),
         ...edges.map((edge) => ({
@@ -59,7 +74,7 @@ const DependencyGraph = ({
       ],
       style: [
         {
-          selector: 'node',
+          selector: 'node[label]',
           style: {
             'background-color': (ele) => getLanguageColor(ele.data('language')),
             label: 'data(label)',
@@ -112,12 +127,17 @@ const DependencyGraph = ({
         }
       ],
       layout: {
-        name: 'cose',
-        animate: true,
-        animationDuration: 600,
-        padding: 50
+        name: 'grid'
       }
     });
+
+    const layout = cy.layout({
+      name: 'cose',
+      animate: false,
+      padding: 50
+    });
+    layout.run();
+    layoutRef.current = layout;
 
     cy.on('tap', 'node', (event) => {
       onNodeClick(event.target.id());
@@ -126,57 +146,44 @@ const DependencyGraph = ({
     cyRef.current = cy;
 
     return () => {
+      layoutRef.current?.stop();
+      layoutRef.current = null;
+      cy.elements().stop();
+      cy.stop();
       cy.destroy();
+      if (cyRef.current === cy) {
+        cyRef.current = null;
+      }
     };
   }, [nodes, edges, onNodeClick]);
 
   useEffect(() => {
-    if (!cyRef.current) return;
+    const cy = cyRef.current;
+    if (!cy || cy.destroyed()) return;
 
-    cyRef.current.nodes().removeClass('highlighted');
-    cyRef.current.edges().removeClass('highlighted');
+    cy.nodes().removeClass('highlighted');
+    cy.edges().removeClass('highlighted');
 
-    if (selectedNodeId) {
-      const node = cyRef.current.$(`#${CSS.escape(selectedNodeId)}`);
+    if (activeSelectedNodeId) {
+      const node = cy.$(`#${CSS.escape(activeSelectedNodeId)}`);
       node.select();
     }
 
-    if (highlightedNodeIds.length > 0) {
-      const highlightedSet = new Set(highlightedNodeIds);
-      highlightedNodeIds.forEach((nodeId, index) => {
-        const node = cyRef.current!.$(`#${CSS.escape(nodeId)}`);
+    if (activeHighlightedNodeIds.length > 0) {
+      const highlightedSet = new Set(activeHighlightedNodeIds);
+      activeHighlightedNodeIds.forEach((nodeId) => {
+        const node = cy.$(`#${CSS.escape(nodeId)}`);
+        if (!node || node.length === 0) return;
         node.addClass('highlighted');
-        node.animate(
-          {
-            style: {
-              width: 70,
-              height: 70
-            }
-          },
-          {
-            duration: 180 + index * 60
-          }
-        );
-        node.animate(
-          {
-            style: {
-              width: 56,
-              height: 56
-            }
-          },
-          {
-            duration: 200
-          }
-        );
       });
 
-      cyRef.current.edges().forEach((edge) => {
+      cy.edges().forEach((edge) => {
         if (highlightedSet.has(edge.source().id()) && highlightedSet.has(edge.target().id())) {
           edge.addClass('highlighted');
         }
       });
     }
-  }, [selectedNodeId, highlightedNodeIds]);
+  }, [activeSelectedNodeId, activeHighlightedNodeIds]);
 
   return (
     <div className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden h-full">

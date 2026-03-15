@@ -1,0 +1,347 @@
+{
+  "repo_id": "demo-fastapi-react-postgres-redis",
+  "generated_at": "2026-03-15T00:30:00Z",
+  "summary": {
+    "node_count": 12,
+    "edge_count": 16,
+    "languages": ["env", "javascript", "python", "sql"],
+    "high_risk_nodes": 4
+  },
+  "nodes": [
+    {
+      "id": "frontend.page.user.loadUserPage",
+      "label": "loadUserPage",
+      "type": "function",
+      "language": "typescript",
+      "file": "FRONTEND/src/pages/UserPage.tsx",
+      "line": 18,
+      "group": "frontend",
+      "risk_score": 0.62,
+      "pagerank": 0.09,
+      "metadata": {
+        "display_name": "User Page Loader",
+        "apis": ["GET /api/users/{id}"],
+        "path_hint": "frontend/pages/user"
+      }
+    },
+    {
+      "id": "frontend.component.userCard.render",
+      "label": "UserCard",
+      "type": "function",
+      "language": "typescript",
+      "file": "FRONTEND/src/components/UserCard.tsx",
+      "line": 9,
+      "group": "frontend",
+      "risk_score": 0.48,
+      "pagerank": 0.07,
+      "metadata": {
+        "display_name": "User Card Component",
+        "apis": [],
+        "path_hint": "frontend/components/user"
+      }
+    },
+    {
+      "id": "frontend.component.riskDial.render",
+      "label": "RiskDial",
+      "type": "function",
+      "language": "typescript",
+      "file": "FRONTEND/src/components/RiskDial.tsx",
+      "line": 6,
+      "group": "frontend",
+      "risk_score": 0.39,
+      "pagerank": 0.05,
+      "metadata": {
+        "display_name": "Risk Dial Widget",
+        "apis": [],
+        "path_hint": "frontend/components/dashboard"
+      }
+    },
+    {
+      "id": "backend.api.users.get_user",
+      "label": "get_user",
+      "type": "api",
+      "language": "python",
+      "file": "backend/app/routes/users.py",
+      "line": 18,
+      "group": "backend",
+      "risk_score": 0.84,
+      "pagerank": 0.16,
+      "metadata": {
+        "display_name": "Get User API",
+        "route": "/api/users/{id}",
+        "method": "GET",
+        "apis": ["GET /api/users/{id}"]
+      }
+    },
+    {
+      "id": "backend.service.user.fetch_user_profile",
+      "label": "fetch_user_profile",
+      "type": "function",
+      "language": "python",
+      "file": "backend/app/services/user_service.py",
+      "line": 22,
+      "group": "backend",
+      "risk_score": 0.81,
+      "pagerank": 0.14,
+      "metadata": {
+        "display_name": "User Profile Service",
+        "apis": ["users.select"]
+      }
+    },
+    {
+      "id": "backend.service.auth.require_auth",
+      "label": "require_auth",
+      "type": "function",
+      "language": "python",
+      "file": "backend/app/middleware/auth.py",
+      "line": 11,
+      "group": "backend",
+      "risk_score": 0.73,
+      "pagerank": 0.11,
+      "metadata": {
+        "display_name": "Auth Middleware",
+        "apis": []
+      }
+    },
+    {
+      "id": "backend.cache.redis.user_profile",
+      "label": "redis_user_profile",
+      "type": "cache",
+      "language": "json",
+      "file": "backend/app/cache/redis_user_profile.json",
+      "line": 1,
+      "group": "infra",
+      "risk_score": 0.55,
+      "pagerank": 0.08,
+      "metadata": {
+        "display_name": "Redis User Cache",
+        "apis": ["redis:get", "redis:set"]
+      }
+    },
+    {
+      "id": "db.table.users",
+      "label": "users",
+      "type": "table",
+      "language": "sql",
+      "file": "backend/db/schema.sql",
+      "line": 4,
+      "group": "db",
+      "risk_score": 0.78,
+      "pagerank": 0.12,
+      "metadata": {
+        "display_name": "Users Table",
+        "apis": ["SELECT users"]
+      }
+    },
+    {
+      "id": "db.column.users.email",
+      "label": "users.email",
+      "type": "column",
+      "language": "sql",
+      "file": "backend/db/schema.sql",
+      "line": 7,
+      "group": "db",
+      "risk_score": 0.66,
+      "pagerank": 0.06,
+      "metadata": {
+        "display_name": "Users Email Column",
+        "apis": []
+      }
+    },
+    {
+      "id": "env.JWT_SECRET",
+      "label": "JWT_SECRET",
+      "type": "env",
+      "language": "env",
+      "file": ".env",
+      "line": 3,
+      "group": "infra",
+      "risk_score": 0.74,
+      "pagerank": 0.07,
+      "metadata": {
+        "display_name": "JWT Secret",
+        "apis": []
+      }
+    },
+    {
+      "id": "backend.worker.analytics.emit_user_metric",
+      "label": "emit_user_metric",
+      "type": "function",
+      "language": "python",
+      "file": "backend/app/workers/analytics.py",
+      "line": 15,
+      "group": "backend",
+      "risk_score": 0.44,
+      "pagerank": 0.03,
+      "metadata": {
+        "display_name": "Analytics Worker",
+        "apis": ["metrics.emit"]
+      }
+    },
+    {
+      "id": "frontend.page.admin.auditView",
+      "label": "auditView",
+      "type": "function",
+      "language": "typescript",
+      "file": "FRONTEND/src/pages/AuditView.tsx",
+      "line": 14,
+      "group": "frontend",
+      "risk_score": 0.58,
+      "pagerank": 0.04,
+      "metadata": {
+        "display_name": "Audit View",
+        "apis": ["GET /api/users/{id}"]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-001",
+      "source": "frontend.page.user.loadUserPage",
+      "target": "backend.api.users.get_user",
+      "type": "api_call",
+      "confidence": 0.98,
+      "weight": 1,
+      "evidence": ["GET /api/users/:id matched to GET /api/users/{id}"]
+    },
+    {
+      "id": "edge-002",
+      "source": "frontend.page.admin.auditView",
+      "target": "backend.api.users.get_user",
+      "type": "api_call",
+      "confidence": 0.95,
+      "weight": 1,
+      "evidence": ["Admin audit view also calls user read API"]
+    },
+    {
+      "id": "edge-003",
+      "source": "backend.api.users.get_user",
+      "target": "backend.service.auth.require_auth",
+      "type": "calls",
+      "confidence": 0.94,
+      "weight": 1,
+      "evidence": ["API route depends on auth middleware"]
+    },
+    {
+      "id": "edge-004",
+      "source": "backend.api.users.get_user",
+      "target": "backend.service.user.fetch_user_profile",
+      "type": "calls",
+      "confidence": 0.97,
+      "weight": 1,
+      "evidence": ["API delegates to user service"]
+    },
+    {
+      "id": "edge-005",
+      "source": "backend.service.user.fetch_user_profile",
+      "target": "backend.cache.redis.user_profile",
+      "type": "reads",
+      "confidence": 0.82,
+      "weight": 1,
+      "evidence": ["Service checks Redis cache before DB"]
+    },
+    {
+      "id": "edge-006",
+      "source": "backend.service.user.fetch_user_profile",
+      "target": "db.table.users",
+      "type": "reads",
+      "confidence": 0.93,
+      "weight": 1,
+      "evidence": ["SQL query selects from users table"]
+    },
+    {
+      "id": "edge-007",
+      "source": "db.table.users",
+      "target": "db.column.users.email",
+      "type": "defines",
+      "confidence": 1,
+      "weight": 1,
+      "evidence": ["Column belongs to table"]
+    },
+    {
+      "id": "edge-008",
+      "source": "backend.service.auth.require_auth",
+      "target": "env.JWT_SECRET",
+      "type": "env_usage",
+      "confidence": 0.99,
+      "weight": 1,
+      "evidence": ["JWT secret used in auth middleware"]
+    },
+    {
+      "id": "edge-009",
+      "source": "frontend.page.user.loadUserPage",
+      "target": "frontend.component.userCard.render",
+      "type": "calls",
+      "confidence": 0.91,
+      "weight": 1,
+      "evidence": ["Page renders user card"]
+    },
+    {
+      "id": "edge-010",
+      "source": "frontend.page.user.loadUserPage",
+      "target": "frontend.component.riskDial.render",
+      "type": "calls",
+      "confidence": 0.88,
+      "weight": 1,
+      "evidence": ["Page renders risk dial"]
+    },
+    {
+      "id": "edge-011",
+      "source": "backend.service.user.fetch_user_profile",
+      "target": "backend.worker.analytics.emit_user_metric",
+      "type": "emits",
+      "confidence": 0.72,
+      "weight": 1,
+      "evidence": ["Profile fetch emits analytics metric"]
+    },
+    {
+      "id": "edge-012",
+      "source": "backend.cache.redis.user_profile",
+      "target": "db.table.users",
+      "type": "references",
+      "confidence": 0.61,
+      "weight": 1,
+      "evidence": ["Cache key mirrors users table rows"]
+    },
+    {
+      "id": "edge-013",
+      "source": "frontend.component.userCard.render",
+      "target": "db.column.users.email",
+      "type": "references",
+      "confidence": 0.57,
+      "weight": 1,
+      "evidence": ["Email field is rendered in user card"]
+    },
+    {
+      "id": "edge-014",
+      "source": "frontend.page.admin.auditView",
+      "target": "frontend.component.riskDial.render",
+      "type": "calls",
+      "confidence": 0.76,
+      "weight": 1,
+      "evidence": ["Audit page shares risk dial widget"]
+    },
+    {
+      "id": "edge-015",
+      "source": "backend.api.users.get_user",
+      "target": "backend.cache.redis.user_profile",
+      "type": "writes",
+      "confidence": 0.69,
+      "weight": 1,
+      "evidence": ["API refresh path updates cache"]
+    },
+    {
+      "id": "edge-016",
+      "source": "backend.worker.analytics.emit_user_metric",
+      "target": "frontend.component.riskDial.render",
+      "type": "consumes",
+      "confidence": 0.52,
+      "weight": 1,
+      "evidence": ["Dashboard risk dial consumes analytics aggregate"]
+    }
+  ],
+  "warnings": [
+    "2 inferred frontend-to-database references rely on naming similarity.",
+    "Redis cache relation is partially inferred from key naming."
+  ]
+}
